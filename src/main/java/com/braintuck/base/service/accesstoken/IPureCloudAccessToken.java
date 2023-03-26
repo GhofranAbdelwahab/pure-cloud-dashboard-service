@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
-public interface IPureConnectAccessToken {
+public interface IPureCloudAccessToken {
     Mono<AccessTokenResponse> login();
 }

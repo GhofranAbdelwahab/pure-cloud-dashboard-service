@@ -1,15 +1,13 @@
 package com.braintuck.base.controller;
 
-import com.braintuck.base.models.response.AccessTokenResponse;
-import com.braintuck.base.service.accesstoken.IPureConnectAccessToken;
+import com.braintuck.base.models.request.DashboardRequest;
+import com.braintuck.base.models.response.DashboardResponse;
+import com.braintuck.base.service.dashboard.IPureCloudDashboard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 /**
@@ -22,12 +20,12 @@ import reactor.core.publisher.Mono;
 public class PureCloudController {
 
     @Autowired
-    @Qualifier("PureConnectAccessToken")
-    IPureConnectAccessToken service;
+    @Qualifier("PureCloudDashboard")
+    IPureCloudDashboard service;
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<Mono<AccessTokenResponse>> login() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.login());
+    @PostMapping(value = "/dashboard")
+    public ResponseEntity<Mono<DashboardResponse>> dashboard(@RequestBody DashboardRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.buildDashboard(request));
     }
 
 }

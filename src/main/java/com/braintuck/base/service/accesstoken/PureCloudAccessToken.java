@@ -13,12 +13,14 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 import static com.braintuck.base.models.Constants.PURE_CLOUD_LOGIN_BEAN;
 import static com.braintuck.base.models.Constants.PURE_CLOUD_LOGIN_PATH_AUTH;
 
 @Slf4j
-@Component("PureConnectAccessToken")
-public class PureConnectAccessToken implements IPureConnectAccessToken {
+@Component("PureCloudAccessToken")
+public class PureCloudAccessToken implements IPureCloudAccessToken {
 
     @Autowired
     @Qualifier(PURE_CLOUD_LOGIN_BEAN)
@@ -29,14 +31,12 @@ public class PureConnectAccessToken implements IPureConnectAccessToken {
         return loginWebClient.build()
                 .post()
                 .uri(uriBuilder -> uriBuilder.path(PURE_CLOUD_LOGIN_PATH_AUTH).build())
-                .contentType (MediaType.APPLICATION_FORM_URLENCODED)
-                .header(HttpHeaders.AUTHORIZATION,"Basic MjlhYTEzYzctMTY5My00N2RjLTg2NzItZmI1MDI5OTA5NzFjOmJDb1lPczFxZU9jWGpEZndRTTZYVkEta2ZZSWwwd1lpTHlMVnJiajdJQWM=")
-                .body(BodyInserters.fromFormData("grant_type","client_credentials"))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header(HttpHeaders.AUTHORIZATION, "Basic MjlhYTEzYzctMTY5My00N2RjLTg2NzItZmI1MDI5OTA5NzFjOmJDb1lPczFxZU9jWGpEZndRTTZYVkEta2ZZSWwwd1lpTHlMVnJiajdJQWM=")
+                .body(BodyInserters.fromFormData("grant_type", "client_credentials"))
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(Error::new))
                 .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(Error::new))
                 .bodyToMono(AccessTokenResponse.class);
     }
-
-
 }
