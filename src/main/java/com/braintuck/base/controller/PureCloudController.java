@@ -24,8 +24,8 @@ public class PureCloudController {
     IPureCloudDashboard service;
 
     @PostMapping(value = "/dashboard")
-    public ResponseEntity<Mono<DashboardResponse>> dashboard(@RequestBody DashboardRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.buildDashboard(request));
+    public ResponseEntity<Mono<DashboardResponse>> dashboard() {
+        return ResponseEntity.status(HttpStatus.OK).body(service.buildDashboard(new DashboardRequest()));
     }
 
 }
