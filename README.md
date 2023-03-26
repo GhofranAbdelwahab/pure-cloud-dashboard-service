@@ -1,2 +1,2 @@
-# pure-connect-dashboard-service
-PureConnect Dashboard Service
+# pure-cloud-dashboard-service
+PureCloud Dashboard Service
