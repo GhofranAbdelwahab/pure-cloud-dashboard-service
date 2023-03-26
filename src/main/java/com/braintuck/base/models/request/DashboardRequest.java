@@ -3,7 +3,6 @@ package com.braintuck.base.models.request;
 import com.braintuck.base.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import java.util.Arrays;
