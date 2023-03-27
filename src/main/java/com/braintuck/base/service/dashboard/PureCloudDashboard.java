@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static com.braintuck.base.models.Constants.*;
 
 @Slf4j
@@ -28,8 +32,7 @@ public class PureCloudDashboard implements IPureCloudDashboard {
     WebClient.Builder dashboardWebClient;
 
     @Override
-    public Mono<DashboardResponse> buildDashboard(DashboardRequest request) {
-
+    public Mono<List<DashboardResponse.Metric>> buildDashboard(DashboardRequest request) {
         return iPureCloudAccessToken.login()
                 .flatMap(response -> {
                             String accessToken = response.getAccess_token();
@@ -43,7 +46,11 @@ public class PureCloudDashboard implements IPureCloudDashboard {
                                     .retrieve()
                                     .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(Error::new))
                                     .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(Error::new))
-                                    .bodyToMono(DashboardResponse.class);
+                                    .bodyToMono(DashboardResponse.class)
+                                    .map(item -> Optional.ofNullable(item.getResults()).orElse(new ArrayList<>()))
+                                    .map(item -> item.stream().findFirst().orElse(new DashboardResponse.Result()))
+                                    .map(item -> Optional.ofNullable(item.getData()).orElse(new ArrayList<>()).stream().findFirst().orElse(new DashboardResponse.Data()))
+                                    .map(item -> Optional.ofNullable(item.getMetrics()).orElse(new ArrayList<>()));
                         }
                 );
     }

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * @author GhofranAbdelwahab
  * @Date 26 Mar 2023
@@ -24,8 +26,7 @@ public class PureCloudController {
     IPureCloudDashboard service;
 
     @PostMapping(value = "/dashboard")
-    public ResponseEntity<Mono<DashboardResponse>> dashboard() {
+    public ResponseEntity<Mono<List<DashboardResponse.Metric>>> dashboard() {
         return ResponseEntity.status(HttpStatus.OK).body(service.buildDashboard(new DashboardRequest()));
     }
-
 }

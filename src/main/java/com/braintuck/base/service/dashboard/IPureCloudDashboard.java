@@ -6,7 +6,9 @@ import com.braintuck.base.models.response.DashboardResponse;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Service
 public interface IPureCloudDashboard {
-    Mono<DashboardResponse> buildDashboard(DashboardRequest request);
+    Mono<List<DashboardResponse.Metric>> buildDashboard(DashboardRequest request);
 }
