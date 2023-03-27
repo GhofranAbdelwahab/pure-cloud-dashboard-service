@@ -2,6 +2,7 @@ package com.braintuck.base.service.dashboard;
 
 
 import com.braintuck.base.models.request.DashboardRequest;
+import com.braintuck.base.models.response.AccessTokenResponse;
 import com.braintuck.base.models.response.DashboardResponse;
 import com.braintuck.base.service.accesstoken.IPureCloudAccessToken;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,18 +32,15 @@ public class PureCloudDashboard implements IPureCloudDashboard {
     @Autowired
     @Qualifier(PURE_CLOUD_DASHBOARD)
     WebClient.Builder dashboardWebClient;
-
     @Override
     public Mono<List<DashboardResponse.Metric>> buildDashboard(DashboardRequest request) {
         return iPureCloudAccessToken.login()
                 .flatMap(response -> {
-                            String accessToken = response.getAccess_token();
-                            log.info(accessToken);
                             return dashboardWebClient.build()
                                     .post()
                                     .uri(uriBuilder -> uriBuilder.path(PURE_CLOUD_DASHBOARD_PATH_QUERY).build())
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getAccess_token())
                                     .bodyValue(request)
                                     .retrieve()
                                     .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(Error::new))
