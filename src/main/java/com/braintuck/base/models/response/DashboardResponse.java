@@ -39,8 +39,8 @@ public class DashboardResponse {
     @lombok.Data
     public static class Stats {
         private Integer count;
-        private Integer max;
-        private Integer min;
-        private Integer sum;
+//        private Integer max;
+//        private Integer min;
+//        private Integer sum;
     }
 }

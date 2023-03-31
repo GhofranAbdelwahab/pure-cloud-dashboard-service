@@ -13,6 +13,8 @@ public class DateUtils {
 
     private static Date startOfToday() {
         Calendar calendar = Calendar.getInstance();
+
+        calendar.set(Calendar.DATE, -1);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -24,6 +26,7 @@ public class DateUtils {
 
     private static Date endOfToday() {
         Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DATE, -1);
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
