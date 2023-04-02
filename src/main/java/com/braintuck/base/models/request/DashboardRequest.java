@@ -21,7 +21,7 @@ public class DashboardRequest {
     public DashboardRequest() {
         this.interval = DateUtils.buildInverterOfCurrentDay();
         this.filter = new Filter();
-        this.metrics = Arrays.asList("tAbandon", "tAnswered", "nOffered", "tFlowOut");
+        this.metrics = Arrays.asList("tAbandon", "tAnswered", "nOffered");
     }
 
     @Data
