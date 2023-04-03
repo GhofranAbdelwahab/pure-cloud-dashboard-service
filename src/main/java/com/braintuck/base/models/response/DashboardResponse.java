@@ -34,6 +34,10 @@ public class DashboardResponse {
     public static class Metric {
         private String metric;
         private Stats stats;
+
+        public String getMetric() {
+            return metric.substring(1);
+        }
     }
 
     @lombok.Data
