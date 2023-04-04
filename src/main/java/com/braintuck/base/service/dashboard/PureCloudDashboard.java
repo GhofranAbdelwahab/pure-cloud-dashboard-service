@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,22 +36,25 @@ public class PureCloudDashboard implements IPureCloudDashboard {
     @Override
     public Mono<List<DashboardResponse.Metric>> buildDashboard(DashboardRequest request) {
         return iPureCloudAccessToken.login()
-                .flatMap(response -> {
-                            return dashboardWebClient.build()
-                                    .post()
-                                    .uri(uriBuilder -> uriBuilder.path(PURE_CLOUD_DASHBOARD_PATH_QUERY).build())
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getAccess_token())
-                                    .bodyValue(request)
-                                    .retrieve()
-                                    .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(Error::new))
-                                    .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(Error::new))
-                                    .bodyToMono(DashboardResponse.class)
-                                    .map(item -> Optional.ofNullable(item.getResults()).orElse(new ArrayList<>()))
-                                    .map(item -> item.stream().findFirst().orElse(new DashboardResponse.Result()))
-                                    .map(item -> Optional.ofNullable(item.getData()).orElse(new ArrayList<>()).stream().findFirst().orElse(new DashboardResponse.Data()))
-                                    .map(item -> Optional.ofNullable(item.getMetrics()).orElse(new ArrayList<>()));
-                        }
-                );
+                .flatMap(response -> dashboardWebClient.build()
+                        .post()
+                        .uri(uriBuilder -> uriBuilder.path(PURE_CLOUD_DASHBOARD_PATH_QUERY).build())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + response.getAccess_token())
+                        .bodyValue(request)
+                        .retrieve()
+                        .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(Error::new))
+                        .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(Error::new))
+                        .bodyToMono(DashboardResponse.class)
+                        .map(item -> Optional.ofNullable(item.getResults()).orElse(new ArrayList<>()))
+                        .map(item -> item.stream().findFirst().orElse(new DashboardResponse.Result()))
+                        .map(item -> Optional.ofNullable(item.getData()).orElse(new ArrayList<>()).stream().findFirst().orElse(new DashboardResponse.Data()))
+                        .map(item -> Optional.ofNullable(item.getMetrics()).orElse(new ArrayList<>())))
+                .map(metrics -> {
+                    if (metrics == null)
+                        return new ArrayList<>();
+                    metrics.sort(Comparator.comparing(DashboardResponse.Metric::getType));
+                    return metrics;
+                });
     }
 }

@@ -33,10 +33,19 @@ public class DashboardResponse {
     @lombok.Data
     public static class Metric {
         private String metric;
+        private Type type;
         private Stats stats;
 
         public String getMetric() {
             return metric.substring(1);
+        }
+
+        public Type getType() {
+            return Type.valueOf(this.getMetric());
+        }
+
+        public enum Type {
+            Offered, Answered, Abandon
         }
     }
 
